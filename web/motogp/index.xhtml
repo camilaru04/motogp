@@ -1,0 +1,147 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Facelet Title</title>
+     
+    </h:head>
+    <h:body>
+       <p:growl id="grwlErrores"/>
+       <h:form id="frmUsuario">
+       <p:panel header="MOTO GP #{sesionUsuario.listaUsuario.contarNodos()}">
+                <p:panelGrid columns="2">
+                    <p:panel header="Datos Usuario">
+                        <p:panelGrid columns="2">
+                            <p:outputLabel for="txtNombre" value="Nombre"/>
+                            <p:inputText id="txtNombre" required="true" disabled="#{sesionUsuario.deshabilitarFormulario}"
+                                         value="#{sesionUsuario.usuario.nombre}"   />
+                            <p:outputLabel value="Piloto"/>
+                            <p:selectOneMenu value="#{sesionUsuario.usuario.piloto}" required="true" disabled="#{sesionUsuario.deshabilitarFormulario}">
+                                <f:selectItem itemLabel="" itemValue="0"/>
+                                <f:selectItem itemLabel="piloto 1" itemValue="1"/>
+                                <f:selectItem itemLabel="piloto 2" itemValue="2"/>
+                                <f:selectItem itemLabel="piloto 3" itemValue="3"/>
+                                <f:selectItem itemLabel="piloto 4" itemValue="4"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Moto"/>
+                            <p:selectOneMenu value="#{sesionUsuario.usuario.tipoMoto}" required="true" disabled="#{sesionUsuario.deshabilitarFormulario}">
+                                <f:selectItem itemLabel="" itemValue="0"/>
+                                <f:selectItem itemLabel="Scoote" itemValue="1"/>
+                                <f:selectItem itemLabel="Street" itemValue="2"/>
+                                <f:selectItem itemLabel="Cuatrimotos" itemValue="3"/>
+                                <f:selectItem itemLabel="Automatico" itemValue="4"/>                               
+                                <f:selectItem itemLabel="Deportiva" itemValue="4"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Color Moto"/>
+                            <p:selectOneMenu value="#{sesionUsuario.usuario.colorMoto}" required="true" disabled="#{sesionUsuario.deshabilitarFormulario}">
+                                <f:selectItem itemLabel="" itemValue="0"/>
+                                <f:selectItem itemLabel="Negro" itemValue="1"/>
+                                <f:selectItem itemLabel="Azul" itemValue="2"/>
+                                <f:selectItem itemLabel="Verde" itemValue="3"/>
+                                <f:selectItem itemLabel="Blanco" itemValue="4"/>
+                            </p:selectOneMenu>
+                            <p:outputLabel value="Cilindraje"/>
+                            <p:selectOneMenu value="#{sesionUsuario.usuario.cilindraje}" required="true" disabled="#{sesionUsuario.deshabilitarFormulario}">
+                                <f:selectItem itemLabel="" itemValue="0"/>
+                                <f:selectItem itemLabel="1000cc" itemValue="1"/>
+                                <f:selectItem itemLabel="180cc" itemValue="2"/>
+                                <f:selectItem itemLabel="200cc" itemValue="3"/>
+                                <f:selectItem itemLabel="650cc" itemValue="4"/>                                
+                                <f:selectItem itemLabel="1200cc" itemValue="4"/>
+                            </p:selectOneMenu>
+                        </p:panelGrid>
+                        <p:commandButton value="Volver" action="inicio" />  
+                        <p:commandButton value="Nuevo" update="frmUsuario" action="#{sesionUsuario.habilitarFormulario()}" disabled="#{!sesionUsuario.deshabilitarFormulario}"/>
+                         <p:commandButton value="Guardar" update="frmUsuario,:grwlErrores" action="#{sesionUsuario.guardarUsuario()}" disabled="#{sesionUsuario.deshabilitarFormulario}"/>
+                        <p:commandButton value="Comenzar" action="usuario" />
+                    </p:panel>                    
+                </p:panelGrid>
+           <p:panel header="Gráfico" id="pnlVista" style="width: 100%;">
+                    <p:commandButton value="#{sesionUsuario.textoVista}" 
+                                     action="#{sesionUsuario.cambiarVistaUsuario()}"
+                                     update="pnlVista"/>
+
+                    <p:dataTable rendered="#{sesionUsuario.textoVista=='Gráfico'}"  value="#{sesionUsuario.listadoUsuario}" var="inf">
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Id"/>
+                            </f:facet>
+                            <p:outputLabel value="#{inf.id}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Nombre"/>
+                            </f:facet>
+                            <p:outputLabel value="#{inf.nombre}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Piloto"/>
+                            </f:facet>
+                            <p:outputLabel value="#{inf.piloto}"/>
+                        </p:column>
+                                                <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Tipo Moto"/>
+                            </f:facet>
+                            <p:outputLabel value="#{inf.tipoMoto}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Color Moto"/>
+                            </f:facet>
+                            <p:outputLabel value="#{inf.colorMoto}"/>
+                        </p:column>
+                        <p:column>
+                            <f:facet name="header">
+                                <p:outputLabel value="Cilindraje"/>
+                            </f:facet>
+                            <p:outputLabel value="#{inf.cilindraje}"/>
+                        </p:column>
+                    </p:dataTable>
+
+                    <p:diagram id="diagrama" rendered="#{sesionUsuario.textoVista=='Tabla'}" value="#{sesionUsuario.model}" style="height:600px; width: 100%;" styleClass="ui-widget-content" />
+
+                    <p:remoteCommand name="elementClickRight" 
+                                     actionListener="#{sesionUsuario.onClickRight()}" 
+                                     >
+                    </p:remoteCommand>
+
+                    <script>
+                        $(document).ready(function () {
+                            $('.ui-diagram > .ui-diagram-element').mousedown(function (info) {
+                                if (info.which === 3) {
+                                    elementClickRight([{
+                                            name: 'elementId',
+                                            value: info.target.id
+                                        }]);
+                                }
+                            });
+                        });
+                    </script>
+
+                  <p:contextMenu id="mnuDiagrama" for="diagrama"
+                                   targetFilter=".ui-diagram-element"
+                                   >
+                        <p:menuitem value="Ver datos" 
+                                    action="#{sesionUsuario.obtenerUsuarioDiagrama()}" 
+                                    update="panelUsuario"                                    
+                                    oncomplete="PF('dlgDatosUsuario').show();" />
+                        <p:menuitem value="Eliminar"/>
+                        <p:menuitem value="Enviar al final" update="pnlVista"                                    
+                                    action="#{sesionUsuario.finalizarCarrera()}"/>
+                        <p:menuitem value="Enviar al inicio" update="pnlVista"                                    
+                                    action="#{sesionUsuario.comenzarCarrera()}"                                    
+                                    />
+                        <p:menuitem value="Adelantar/Perder Posición"/>
+                    </p:contextMenu> 
+                </p:panel>
+       </p:panel>  
+       </h:form>
+    </h:body>
+</html>
+
+
